@@ -1,0 +1,11 @@
+# 빌드 결과물
+*.jar
+*.class
+/target/
+/build/
+
+# IDE 설정 파일
+.idea/
+
+# 로그 파일
+*.log
