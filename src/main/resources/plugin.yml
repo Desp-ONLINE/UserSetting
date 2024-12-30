@@ -1,0 +1,4 @@
+name: UserSetting
+version: '1.0-SNAPSHOT'
+main: org.ide.userSetting.UserSetting
+api-version: '1.20'
