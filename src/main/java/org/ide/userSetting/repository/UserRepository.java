@@ -1,4 +1,4 @@
-package org.ide.userSetting.database;
+package org.ide.userSetting.repository;
 
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
@@ -6,17 +6,19 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.UpdateOptions;
+import com.mongodb.client.model.Updates;
 import org.bson.Document;
 import org.ide.userSetting.object.UserInfo;
 
 import java.util.UUID;
 
-public class MongoDBRepository {
+public class UserRepository {
     private final MongoClient mongoClient;
     private final MongoDatabase database;
 
-    public MongoDBRepository() {
+    public UserRepository() {
         String atlasString = "mongodb://localhost:27017";
         ConnectionString connectionString = new ConnectionString(atlasString);
         MongoClientSettings settings = MongoClientSettings.builder()
@@ -31,26 +33,32 @@ public class MongoDBRepository {
         Document playerDoc = collection.find(new Document("uuid", uuid.toString())).first();
 
         if (playerDoc != null) {
-            String nickname = playerDoc.getString("nickname");
-            return new UserInfo(uuid, nickname);
+            String nickname = playerDoc.getString("name");
+            boolean hud = playerDoc.getBoolean("hud", true);
+            return new UserInfo(uuid, nickname, hud);
         }
 
         return null;
     }
 
-    public void insertPlayerInfo(UserInfo userInfo) {
+    public void saveUserInfo(UserInfo userInfo) {
         MongoCollection<Document> collection = database.getCollection("UserData");
-        Document newPlayer = new Document("uuid", userInfo.getUuid().toString())
-                .append("nickname", userInfo.getName());
-        collection.insertOne(newPlayer);
+        Document document = new Document("uuid", userInfo.getUuid().toString())
+                .append("name", userInfo.getName())
+                .append("hud", userInfo.isHud());
+
+        collection.insertOne(document);
     }
 
-    public void updateNickname(UUID uuid, String newNickname) {
+    public void updateUserInfo(UserInfo userInfo) {
         MongoCollection<Document> collection = database.getCollection("UserData");
         collection.updateOne(
-                new Document("uuid", uuid.toString()),
-                new Document("$set", new Document("nickname", newNickname)),
-                new UpdateOptions().upsert(false)
+                Filters.eq("uuid", userInfo.getUuid().toString()),
+                Updates.combine(
+                        Updates.set("name", userInfo.getName()),
+                        Updates.set("hud", userInfo.isHud())
+                ),
+                new UpdateOptions().upsert(true)
         );
     }
 

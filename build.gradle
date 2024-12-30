@@ -20,6 +20,10 @@ repositories {
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
     implementation fileTree(include: ['*.jar'], dir: 'libs')
+
+    // Lombok
+    compileOnly 'org.projectlombok:lombok:1.18.36'
+    annotationProcessor 'org.projectlombok:lombok:1.18.36'
 }
 
 def targetJavaVersion = 17

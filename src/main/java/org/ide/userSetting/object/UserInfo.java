@@ -4,11 +4,13 @@ import java.util.UUID;
 
 public class UserInfo {
     private final UUID uuid;
-    private final String name;
+    private String name;
+    private boolean hud;
 
-    public UserInfo(UUID uuid, String name) {
+    public UserInfo(UUID uuid, String name, boolean hud) {
         this.uuid = uuid;
         this.name = name;
+        this.hud = hud;
     }
 
     public UUID getUuid() {
@@ -17,5 +19,17 @@ public class UserInfo {
 
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public boolean isHud() {
+        return hud;
+    }
+
+    public void setHud() {
+        this.hud = !this.hud;
     }
 }
